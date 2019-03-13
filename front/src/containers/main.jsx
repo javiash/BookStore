@@ -1,41 +1,53 @@
-import React from 'react'
-import { connect } from 'react-redux';
-// import { } from '../store/actions/actions'
-import Axios from 'axios';
-
-
+import React from "react";
+import { connect } from "react-redux";
+import { setSearch, setBookFund } from "../store/actions/actions";
+import Axios from "axios";
+import SearchBar from "../components/SearchBar.jsx";
+import Header from "../components/Header.jsx";
 
 class Main extends React.Component {
-
-
-    
+    handleChange(e) {
+      this.props.setSearch(e.target.value);
+    }
+  
+    componentDidUpdate(prevState) {
+      if (this.state.search == prevState.search)
+        Axios.get(
+          `http://www.omdbapi.com/?apikey=8c8bfbdc&s=${this.props.search}`
+        ).then(books => {
+          console.log(books);
+          this.props.setBookFound(books);
+        });
+    }
+  
     render() {
-        return (
-            <div>
-                <h1>Hola Titanes de nuevo!!!</h1>
-
-                
-
-            </div>
-        )
+      return (
+        <div>
+          <section>
+            <Header />
+            </section>
+            <SearchBar />
+        </div>
+      );
     }
-
-
-
-}
-
-
-function mapStateToProps(state) {
+  }
+  
+  function mapStateToProps(state) {
     return {
-        // Lo dejo vacio para que cada uno lo use como quiera
-    }
-}
-
-function mapDispatchToProps(dispatch) {
+      search: state.search,
+      find: state.find
+    };
+  }
+  
+  function mapDispatchToProps(dispatch) {
     return {
-        // Lo dejo vacio para que cada uno lo use como quiera
-    }
-}
+      setSearch: text => dispatch(setSearch(text)),
+      setBookFound: ArrayBOoks => dispatch(setBookFound(ArrayBOoks))
+    };
+  }
+  
+  export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Main);
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(Main)
